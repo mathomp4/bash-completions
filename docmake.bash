@@ -7,8 +7,8 @@ _docmake_completion() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    # All available options
-    opts="--debug --aggressive --vecttrap --ninja --only-cmake -n --dryrun --dry-run --runtests --jobs --extra --builddir --installdir --cmake-options --mit --no-f2py -h --help"
+    # All available options (Added --gnumake and --profile)
+    opts="--debug --aggressive --vecttrap --ninja --gnumake --only-cmake -n --dryrun --dry-run --runtests --jobs --extra --builddir --installdir --cmake-options --mit --no-f2py --profile -h --help"
 
     # Handle options that require arguments
     case "${prev}" in
@@ -27,8 +27,9 @@ _docmake_completion() {
             return 0
             ;;
         --cmake-options)
-            # Suggest common CMake options
-            COMPREPLY=( $(compgen -W "-D -DCMAKE_" -- ${cur}) )
+            # Suggest common CMake options (Expanded to match Zsh capabilities)
+            local cmake_suggestions="-DCMAKE_C_COMPILER -DCMAKE_CXX_COMPILER -DCMAKE_Fortran_COMPILER -DCMAKE_C_FLAGS -DCMAKE_CXX_FLAGS -DCMAKE_Fortran_FLAGS -DCMAKE_VERBOSE_MAKEFILE -DBUILD_SHARED_LIBS -DCMAKE_EXPORT_COMPILE_COMMANDS"
+            COMPREPLY=( $(compgen -W "${cmake_suggestions}" -- ${cur}) )
             return 0
             ;;
         *)
