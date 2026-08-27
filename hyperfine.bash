@@ -1,15 +1,19 @@
 _hyperfine() {
-    local i cur prev opts cmds
+    local i cur prev opts cmd
     COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+        cur="$2"
+    else
+        cur="${COMP_WORDS[COMP_CWORD]}"
+    fi
+    prev="$3"
     cmd=""
     opts=""
 
-    for i in ${COMP_WORDS[@]}
+    for i in "${COMP_WORDS[@]:0:COMP_CWORD}"
     do
-        case "${i}" in
-            "$1")
+        case "${cmd},${i}" in
+            ",$1")
                 cmd="hyperfine"
                 ;;
             *)
@@ -19,7 +23,7 @@ _hyperfine() {
 
     case "${cmd}" in
         hyperfine)
-            opts="-h -V -w -m -M -r -s -p -c -P -D -L -S -N -i -u -n --help --version --warmup --min-runs --max-runs --runs --setup --prepare --cleanup --parameter-scan --parameter-step-size --parameter-list --style --shell --ignore-failure --time-unit --export-asciidoc --export-csv --export-json --export-markdown --export-orgmode --show-output --output --command-name --min-benchmarking-time --debug-mode <command>..."
+            opts="-w -m -M -r -s -p -C -c -P -D -L -S -N -i -u -n -h -V --warmup --min-runs --max-runs --runs --setup --reference --reference-name --prepare --conclude --cleanup --parameter-scan --parameter-step-size --parameter-list --shell --ignore-failure --style --sort --time-unit --export-asciidoc --export-csv --export-json --export-markdown --export-orgmode --show-output --output --input --command-name --min-benchmarking-time --debug-mode --help --version <command>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -65,11 +69,27 @@ _hyperfine() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --reference)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --reference-name)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --prepare)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 -p)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --conclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -C)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -105,10 +125,6 @@ _hyperfine() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                --style)
-                    COMPREPLY=($(compgen -W "auto basic full nocolor color none" -- "${cur}"))
-                    return 0
-                    ;;
                 --shell)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -117,35 +133,110 @@ _hyperfine() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --ignore-failure)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -i)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --style)
+                    COMPREPLY=($(compgen -W "auto basic full nocolor color none" -- "${cur}"))
+                    return 0
+                    ;;
+                --sort)
+                    COMPREPLY=($(compgen -W "auto command mean-time" -- "${cur}"))
+                    return 0
+                    ;;
                 --time-unit)
-                    COMPREPLY=($(compgen -W "millisecond second" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "microsecond millisecond second" -- "${cur}"))
                     return 0
                     ;;
                 -u)
-                    COMPREPLY=($(compgen -W "millisecond second" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "microsecond millisecond second" -- "${cur}"))
                     return 0
                     ;;
                 --export-asciidoc)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
                     COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
                     return 0
                     ;;
                 --export-csv)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
                     COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
                     return 0
                     ;;
                 --export-json)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
                     COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
                     return 0
                     ;;
                 --export-markdown)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
                     COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
                     return 0
                     ;;
                 --export-orgmode)
+                    local oldifs
+                    if [ -n "${IFS+x}" ]; then
+                        oldifs="$IFS"
+                    fi
+                    IFS=$'\n'
                     COMPREPLY=($(compgen -f "${cur}"))
+                    if [ -n "${oldifs+x}" ]; then
+                        IFS="$oldifs"
+                    fi
+                    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+                        compopt -o filenames
+                    fi
                     return 0
                     ;;
                 --output)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --input)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -171,4 +262,8 @@ _hyperfine() {
     esac
 }
 
-complete -F _hyperfine -o bashdefault -o default hyperfine
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _hyperfine -o nosort -o bashdefault -o default hyperfine
+else
+    complete -F _hyperfine -o bashdefault -o default hyperfine
+fi
