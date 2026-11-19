@@ -8,7 +8,7 @@ _docmake_completion() {
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     # All available options (Added --gnumake and --profile)
-    opts="--debug --aggressive --vecttrap --ninja --gnumake --only-cmake -n --dryrun --dry-run --runtests --jobs --extra --builddir --installdir --cmake-options --mit --no-f2py --profile -h --help"
+    opts="--debug --aggressive --fast --vecttrap --ninja --gnumake --only-cmake -n --dryrun --dry-run --runtests --jobs --extra --builddir --installdir --cmake-options --mit --no-f2py --profile -h --help"
 
     # Handle options that require arguments
     case "${prev}" in
